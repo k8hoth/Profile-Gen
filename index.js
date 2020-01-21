@@ -259,15 +259,13 @@ function generateHTML(data) {
                 <footer class="wrapper"></footer>
                 </div>        
                 </body>
-        </html>
-    
-        `
+        </html>`
             
             
             const html = generateHTML(data);
             pdf.create(html, options).toFile(`./${username}_GitHub.pdf`, function(err, res) {
                 if (err) return console.log(err);
-                console.log(res); // { filename: '/app/businesscard.pdf' }
+                console.log(res); { filename: '/app/businesscard.pdf' }
               });
         
             }});
