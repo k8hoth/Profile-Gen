@@ -45,7 +45,7 @@ inquirer.prompt([
         name: "username"
     },
     {
-        message: "Of the four choices, what is your favorite color",
+        message: "Out of green, blue, pink, red; which is your favorite?",
         choices: ["green", "blue", "pink", "red"],
         name: "color"
     }
@@ -55,11 +55,21 @@ inquirer.prompt([
     const queryUrl = `https://api.github.com/users/${username}`;
 
 axios.get(queryUrl).then(({ data }) => {
-            const { avatar_url, name, location, html_url, blog, bio, public_repos, followers, public_gists, following } = data;
+    const { avatar_url, name, location, html_url, blog, bio, public_repos, followers, public_gists, following } = data;
+    console.log(data);
+/* REF:
+axios.get(queryURL.then(({data})=>{
+    const repoNames = data.map(repo => repo.name).join("\n";);
+    fs.writeFile(`${username}.txt`, repoNames, (err) => {
+        if (err) throw err; 
+        console.log(`Wrote ${data.length} bla bla ${username}.txt`)
+    });
+    */
+});
 
 
-            function generateHTML(data) {
-                return `<!DOCTYPE html>`
+function generateHTML(data) {
+        return `<!DOCTYPE html>
                 <html>
                 <head>
                 <meta charset="UTF-8" />
@@ -249,8 +259,9 @@ axios.get(queryUrl).then(({ data }) => {
                 <footer class="wrapper"></footer>
                 </div>        
                 </body>
-          
-        }}
+        </html>
+    
+        `
             
             
             const html = generateHTML(data);
@@ -258,5 +269,5 @@ axios.get(queryUrl).then(({ data }) => {
                 if (err) return console.log(err);
                 console.log(res); // { filename: '/app/businesscard.pdf' }
               });
-        })
-});
+        
+            }});
