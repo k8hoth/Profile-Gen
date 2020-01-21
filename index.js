@@ -41,13 +41,11 @@ const writeFileAsync = util.promisify(fs.writeFile)
 
 inquirer.prompt([
     {
-        type: "input",
         message: "What is your GitHub UserName?",
         name: "username"
     },
     {
-        type: "list",
-        message: "What is your favorite color",
+        message: "Of the four choices, what is your favorite color",
         choices: ["green", "blue", "pink", "red"],
         name: "color"
     }
@@ -55,15 +53,14 @@ inquirer.prompt([
     const username = data.username
     const dataColor = data.color
     const queryUrl = `https://api.github.com/users/${username}`;
-    axios
-        .get(queryUrl)
-        .then(({ data }) => {
+
+axios.get(queryUrl).then(({ data }) => {
             const { avatar_url, name, location, html_url, blog, bio, public_repos, followers, public_gists, following } = data;
 
 
             function generateHTML(data) {
                 return `<!DOCTYPE html>`
-                <html lang="en">
+                <html>
                 <head>
                 <meta charset="UTF-8" />
                 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -252,9 +249,10 @@ inquirer.prompt([
                 <footer class="wrapper"></footer>
                 </div>        
                 </body>
-                </html>
-            }
-
+          
+        }}
+            
+            
             const html = generateHTML(data);
             pdf.create(html, options).toFile(`./${username}_GitHub.pdf`, function(err, res) {
                 if (err) return console.log(err);
