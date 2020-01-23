@@ -1,75 +1,80 @@
-  
-const inquirer = require("inquirer");
-const fs = require("fs");
+const inquirer = require('inquirer');
+const fs = require('fs');
 const axios = require('axios');
-const util = require("util");
+const util = require('util');
 const pdf = require('html-pdf');
 
-
 const options = { format: 'Letter' };
- 
 
 const colors = {
-    green: {
-        wrapperBackground: "#E6E1C3",
-        headerBackground: "#C1C72C",
-        headerColor: "black",
-        photoBorderColor: "#black"
-    },
-    blue: {
-        wrapperBackground: "#5F64D3",
-        headerBackground: "#26175A",
-        headerColor: "white",
-        photoBorderColor: "#73448C"
-    },
-    pink: {
-        wrapperBackground: "#879CDF",
-        headerBackground: "#FF8374",
-        headerColor: "white",
-        photoBorderColor: "#FEE24C"
-    },
-    red: {
-        wrapperBackground: "#DE9967",
-        headerBackground: "#870603",
-        headerColor: "white",
-        photoBorderColor: "white"
-    }
-}
+  green: {
+    wrapperBackground: '#E6E1C3',
+    headerBackground: '#C1C72C',
+    headerColor: 'black',
+    photoBorderColor: '#black',
+  },
+  blue: {
+    wrapperBackground: '#5F64D3',
+    headerBackground: '#26175A',
+    headerColor: 'white',
+    photoBorderColor: '#73448C',
+  },
+  pink: {
+    wrapperBackground: '#879CDF',
+    headerBackground: '#FF8374',
+    headerColor: 'white',
+    photoBorderColor: '#FEE24C',
+  },
+  red: {
+    wrapperBackground: '#DE9967',
+    headerBackground: '#870603',
+    headerColor: 'white',
+    photoBorderColor: 'white',
+  },
+};
 
-const writeFileAsync = util.promisify(fs.writeFile)
+const writeFileAsync = util.promisify(fs.writeFile);
 
-
-inquirer.prompt([
+inquirer
+  .prompt([
     {
-        message: "What is your GitHub UserName?",
-        name: "username"
+      message: 'What is your GitHub UserName?',
+      name: 'username',
     },
     {
-        message: "Out of green, blue, pink, red; which is your favorite?",
-        choices: ["green", "blue", "pink", "red"],
-        name: "color"
-    }
-]).then(data => {
-    const username = data.username
-    const dataColor = data.color
+      message: 'Out of green, blue, pink, red; which is your favorite?',
+      choices: ['green', 'blue', 'pink', 'red'],
+      name: 'color',
+    },
+  ])
+  .then(answers => {
+    const { username, color } = answers;
     const queryUrl = `https://api.github.com/users/${username}`;
 
-axios.get(queryUrl).then(({ data }) => {
-    const { avatar_url, name, location, html_url, blog, bio, public_repos, followers, public_gists, following } = data;
-    console.log(data);
-/* REF:
-axios.get(queryURL.then(({data})=>{
-    const repoNames = data.map(repo => repo.name).join("\n";);
-    fs.writeFile(`${username}.txt`, repoNames, (err) => {
-        if (err) throw err; 
-        console.log(`Wrote ${data.length} bla bla ${username}.txt`)
+    axios.get(queryUrl).then(({ data }) => {
+      const returnedHTML = generateHTML(data, color);
+      const option = { format: 'Letter' };
+      pdf.create(returnedHTML, options).toFile(`./${data.username}.pdf`, function(err, res) {
+        if (err) return console.log(err);
+        console.log(res); // { filename: '/app/businesscard.pdf' }
+      });
     });
-    */
-});
+  });
 
-
-function generateHTML(data) {
-        return `<!DOCTYPE html>
+function generateHTML(data, dataColor) {
+  const {
+    avatar_url,
+    username,
+    location,
+    html_url,
+    blog,
+    bio,
+    public_repos,
+    followers,
+    public_gists,
+    following,
+  } = data;
+  return `<!DOCTYPE html>
                 <html>
                 <head>
                 <meta charset="UTF-8" />
@@ -220,11 +225,12 @@ function generateHTML(data) {
                 <div class="container">
                     <div class="wrapper">
                         <div class="photo-header">
-                            <img src="${avatar_url}" alt="picture of ${name}">
+                            <img src="${avatar_url}" alt="picture of ${username}">
                             <h1>Hi</h1>
-                            <h1>My Name is ${name}</h1>
+                            <h1>My Name is ${username}</h1>
                             <div class="row links">
-                                <a class="col" target="_blank" href="http://maps.google.com/maps?q=${location.split(' ').join('+')}"><i class="fas fa-map-marked-alt"> ${location}</i></a>
+                                <a class="col" target="_blank" href="http://maps.google.com/maps?q=${location}
+                                  "><i class="fas fa-map-marked-alt"> ${location}</i></a>
                                 <a class="col" target="_blank" href="${html_url}"><i class="fab fa-github"> GitHub</i></a>
                                 <a class="col" target="_blank" href="${blog}"><i class="fas fa-blog"> Blog</i></a>
                             </div>
@@ -259,13 +265,5 @@ function generateHTML(data) {
                 <footer class="wrapper"></footer>
                 </div>        
                 </body>
-        </html>`
-            
-            
-            const html = generateHTML(data);
-            pdf.create(html, options).toFile(`./${username}_GitHub.pdf`, function(err, res) {
-                if (err) return console.log(err);
-                console.log(res); { filename: '/app/businesscard.pdf' }
-              });
-        
-            }});
+        </html>`;
+}
