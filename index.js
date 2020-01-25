@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
-const fs = require('fs');
+// const fs = require('fs');
 const axios = require('axios');
-const util = require('util');
+// const util = require('util');
 const pdf = require('html-pdf');
 
 const options = { format: 'Letter' };
@@ -33,8 +33,6 @@ const colors = {
   },
 };
 
-const writeFileAsync = util.promisify(fs.writeFile);
-
 inquirer
   .prompt([
     {
@@ -53,7 +51,7 @@ inquirer
 
     axios.get(queryUrl).then(({ data }) => {
       const returnedHTML = generateHTML(data, color);
-      const option = { format: 'Letter' };
+
       pdf.create(returnedHTML, options).toFile(`./${data.username}.pdf`, function(err, res) {
         if (err) return console.log(err);
         console.log(res); // { filename: '/app/businesscard.pdf' }
