@@ -52,7 +52,9 @@ inquirer
     axios.get(queryUrl).then(({ data }) => {
       const returnedHTML = generateHTML(data, color);
 
-      pdf.create(returnedHTML, options).toFile(`./${data.username}.pdf`, function(err, res) {
+      console.log(data);
+
+      pdf.create(returnedHTML, options).toFile(`./${data.login}.pdf`, function(err, res) {
         if (err) return console.log(err);
         console.log(res); // { filename: '/app/businesscard.pdf' }
       });
@@ -62,7 +64,7 @@ inquirer
 function generateHTML(data, dataColor) {
   const {
     avatar_url,
-    username,
+    login,
     location,
     html_url,
     blog,
@@ -81,7 +83,7 @@ function generateHTML(data, dataColor) {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"/>
                 <link href="https://fonts.googleapis.com/css?family=BioRhyme|Cabin&display=swap" rel="stylesheet"/>
                 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-                <title>${username}</title>
+                <title>${login}</title>
                 <style>
                     @page {
                         margin: 0;
@@ -223,9 +225,9 @@ function generateHTML(data, dataColor) {
                 <div class="container">
                     <div class="wrapper">
                         <div class="photo-header">
-                            <img src="${avatar_url}" alt="picture of ${username}">
+                            <img src="${avatar_url}" alt="picture of ${login}">
                             <h1>Hi</h1>
-                            <h1>My Name is ${username}</h1>
+                            <h1>My Name is ${login}</h1>
                             <div class="row links">
                                 <a class="col" target="_blank" href="http://maps.google.com/maps?q=${location}
                                   "><i class="fas fa-map-marked-alt"> ${location}</i></a>
